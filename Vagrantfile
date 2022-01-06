@@ -1,12 +1,20 @@
 # -*- mode: ruby -*-
 # vi: set ft=ruby :
 
+@enable_gui = false
+if ARGV.include?('--gui')
+    @enable_gui = true
+    ARGV.delete('--gui')
+elsif ENV["VBOX_GUI"] =~ /1|yes|true/i
+    @enable_gui = true
+end
+
 Vagrant.configure("2") do |config|
     config.vm.box = "kalilinux/rolling"
 
     config.vm.provider "virtualbox" do |vb|
         vb.name = "kalibox"
-        vb.gui = false unless ENV["VBOX_GUI"].to_i > 0
+        vb.gui = @enable_gui
         vb.linked_clone = true
         vb.memory = 2048
         vb.cpus = 1
