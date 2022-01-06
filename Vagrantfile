@@ -1,6 +1,8 @@
 # -*- mode: ruby -*-
 # vi: set ft=ruby :
 
+require_relative 'secrets/credentials.rb'
+
 @enable_gui = false
 if ARGV.include?('--gui')
     @enable_gui = true
@@ -29,7 +31,7 @@ Vagrant.configure("2") do |config|
     # - Disable ChallengeResponseAuthentication
     # - UsePAM is required for account and session check, but without PasswordAuth or CRAM
     # - Disable RootLogin
-    config.vm.provision "shell", inline: <<-SHELL
+    config.vm.provision "SSH Hardening", type: "shell", inline: <<-SHELL
         sed -i -E \
             -e 's/^#?PubkeyAuthentication .*/PubkeyAuthentication yes/' \
             -e 's/^#?PasswordAuthentication .*/PasswordAuthentication no/' \
@@ -38,5 +40,10 @@ Vagrant.configure("2") do |config|
             -e 's/^#?PermitRootLogin .*/PermitRootLogin no/' \
             /etc/ssh/sshd_config
         systemctl restart sshd
+    SHELL
+
+    # Change user password
+    config.vm.provision "Change user password", type: "shell", inline: <<-SHELL
+        chpasswd <<< "#{Credentials::USERNAME}:#{Credentials::PASSWORD}"
     SHELL
 end
