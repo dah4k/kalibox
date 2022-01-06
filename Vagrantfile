@@ -20,6 +20,9 @@ Vagrant.configure("2") do |config|
         vb.cpus = 1
     end
 
+    # Disable default sharing current directory
+    config.vm.synced_folder ".", "/vagrant", disabled: true
+
     # SSH Hardening
     # - Enable PubkeyAuthentication
     # - Disable PasswordAuthentication
