@@ -1,7 +1,7 @@
 # -*- mode: ruby -*-
 # vi: set ft=ruby :
 
-require_relative 'secrets/credentials.rb'
+require 'securerandom'
 
 @enable_gui = false
 if ARGV.include?('--gui')
@@ -9,6 +9,14 @@ if ARGV.include?('--gui')
     ARGV.delete('--gui')
 elsif ENV["VBOX_GUI"] =~ /1|yes|true/i
     @enable_gui = true
+end
+
+SecretPassword = File.join(File.dirname(__FILE__), "secrets/password")
+if File.exist?(SecretPassword)
+    @username_password = open(SecretPassword).read
+else
+    @username_password = "vagrant:" << SecureRandom.hex << "\n"
+    open(SecretPassword, "w") {|f| f.write(@username_password)}
 end
 
 Vagrant.configure("2") do |config|
@@ -44,6 +52,6 @@ Vagrant.configure("2") do |config|
 
     # Change user password
     config.vm.provision "Change user password", type: "shell", inline: <<-SHELL
-        chpasswd <<< "#{Credentials::USERNAME}:#{Credentials::PASSWORD}"
+        chpasswd <<< #{@username_password}
     SHELL
 end
