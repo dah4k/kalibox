@@ -51,7 +51,6 @@ Vagrant.configure("2") do |config|
     SHELL
 
     # Change user password
-    config.vm.provision "Change user password", type: "shell", inline: <<-SHELL
-        chpasswd <<< #{@username_password}
-    SHELL
+    config.vm.provision "Change user password", type: "shell",
+        inline: "chpasswd <<< #{@username_password}"
 end
