@@ -16,7 +16,7 @@ if File.exist?(SecretPassword)
     @username_password = open(SecretPassword).read
 else
     @username_password = "vagrant:" << SecureRandom.hex << "\n"
-    open(SecretPassword, "w") {|f| f.write(@username_password)}
+    open(SecretPassword, "w", 0600) {|f| f.write(@username_password)}
 end
 
 Vagrant.configure("2") do |config|
