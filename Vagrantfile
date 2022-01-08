@@ -64,4 +64,24 @@ Vagrant.configure("2") do |config|
             /root/.zshrc \
             /home/vagrant/.zshrc
     SHELL
+
+    # Start client VPN service
+    # Reference: https://wiki.archlinux.org/title/OpenVPN#Starting_OpenVPN
+    ClientOVPN = File.join(File.dirname(__FILE__), "secrets/client.ovpn")
+    if File.exist? ClientOVPN
+        # File provision "SCP" as user and cannot write directly to /etc
+        config.vm.provision "Upload VPN config to /tmp", type: "file",
+            source: ClientOVPN, destination: "/tmp/client.ovpn"
+
+        config.vm.provision "Configure client VPN", type: "shell", inline: <<-SHELL
+            chown root:root /tmp/client.ovpn
+            chmod 0660 /tmp/client.ovpn
+            mv /tmp/client.ovpn /etc/openvpn/client/client.conf
+        SHELL
+
+        config.vm.provision "Start client VPN service", type: "shell", inline: <<-SHELL
+            systemctl enable openvpn-client@client.service
+            systemctl start openvpn-client@client.service
+        SHELL
+    end
 end
