@@ -53,4 +53,15 @@ Vagrant.configure("2") do |config|
     # Change user password
     config.vm.provision "Change user password", type: "shell",
         inline: "chpasswd <<< #{@username_password}"
+
+    # Fix Kali ZSH ^P history-search
+    config.vm.provision "Fix Kali ZSH ^P", type: "shell", inline: <<-SHELL
+        sed -i -E \
+            -e 's/^zle -N toggle_oneline_prompt/#zle -N toggle_oneline_prompt/' \
+            -e 's/^bindkey .P toggle_oneline_prompt/#bindkey ^P toggle_oneline_prompt/' \
+            /etc/skel/.zshrc \
+            /etc/zsh/newuser.zshrc.recommended \
+            /root/.zshrc \
+            /home/vagrant/.zshrc
+    SHELL
 end
