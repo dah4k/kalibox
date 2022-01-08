@@ -1,0 +1,22 @@
+" General Settings
+set nocompatible
+set backspace=2
+set encoding=utf-8
+filetype on
+
+" Disable borken mouse
+set mouse=""
+
+" Visual Settings
+syntax clear
+syntax on
+set ruler
+set number
+set hlsearch
+
+" 4-space indent
+set tabstop=4
+set softtabstop=0
+set shiftwidth=4
+set expandtab
+

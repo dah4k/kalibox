@@ -1,0 +1,12 @@
+unalias -a
+
+alias ..="cd .."
+alias +="pushd ."
+alias -- -="popd"
+
+alias fd="fdfind"
+alias ip="ip --color=auto"
+alias la="ls -Altr"
+alias ls="ls -F --color=auto"
+alias rg="rg --sort-files"
+alias v="vim -R"
