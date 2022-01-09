@@ -20,3 +20,18 @@ set softtabstop=0
 set shiftwidth=4
 set expandtab
 
+" Trim trailing whitespaces while preserving current view
+" Credit: ThePrimeagen
+function! TrimWhitespace()
+    let l:save = winsaveview()
+    keeppatterns %s/\s\+$//e
+    call winrestview(l:save)
+endfunction
+autocmd BufWritePre * call TrimWhitespace()
+
+" Mappings
+cnoreabbrev w1 w!
+nnoremap ; :
+vnoremap ; :
+nnoremap <F6> :bprevious<CR>
+nnoremap <F7> :bnext<CR>
