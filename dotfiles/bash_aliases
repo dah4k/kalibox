@@ -1,7 +1,7 @@
 unalias -a
 
 alias ..="cd .."
-alias +="pushd ."
+alias -- +="pushd ."
 alias -- -="popd"
 
 alias fd="fdfind"
