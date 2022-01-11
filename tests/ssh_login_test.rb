@@ -67,7 +67,7 @@ class SSHLoginTest < Test::Unit::TestCase
     end
 
     def test_ssh_with_insecure_key_is_denied_2
-        cmd = "ssh -T -F none -i #{@vagrant_insecure_key} -o BatchMode=yes -p #{@guest_port} #{@default_username}@#{@guest_addr} -- #{@remote_cmd}"
+        cmd = "ssh -T -F none -i #{@vagrant_insecure_key} -o BatchMode=yes -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no -p #{@guest_port} #{@default_username}@#{@guest_addr} -- #{@remote_cmd}"
         Open3.popen3(cmd) do |stdin, stdout, stderr|
             error_msg = stderr.read
             assert_match "Permission denied", error_msg
@@ -75,7 +75,7 @@ class SSHLoginTest < Test::Unit::TestCase
     end
 
     def test_ssh_with_new_key_is_allowed_2
-        cmd = "ssh -T -F none -i #{@vagrant_new_key} -o BatchMode=yes -p #{@guest_port} #{@default_username}@#{@guest_addr} -- #{@remote_cmd}"
+        cmd = "ssh -T -F none -i #{@vagrant_new_key} -o BatchMode=yes -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no -p #{@guest_port} #{@default_username}@#{@guest_addr} -- #{@remote_cmd}"
         Open3.popen3(cmd) do |stdin, stdout, stderr|
             result = stdout.read
             assert_equal @expected, result
