@@ -79,6 +79,9 @@ Vagrant.configure("2") do |config|
             mv /tmp/client.ovpn /etc/openvpn/client/client.conf
         SHELL
 
+        # Known issue: Systemd sometime writes info message to stderr.
+        # Vagrant displays anything from stderr in red color.
+        # They are not real errors and may be safely ignored.
         config.vm.provision "Start client VPN service", type: "shell", inline: <<-SHELL
             systemctl enable openvpn-client@client.service
             systemctl start openvpn-client@client.service
