@@ -65,6 +65,15 @@ Vagrant.configure("2") do |config|
             /home/vagrant/.zshrc
     SHELL
 
+    # Enable LightDM Auto-Login
+    config.vm.provision "Enable LightDM Auto-Login", type: "shell", inline: <<-SHELL
+        sed -i -E \
+            -e 's/^#?autologin-user=.*/autologin-user=vagrant/' \
+            /etc/lightdm/lightdm.conf
+        systemctl enable lightdm
+        systemctl restart lightdm
+    SHELL
+
     # Start client VPN service
     # Reference: https://wiki.archlinux.org/title/OpenVPN#Starting_OpenVPN
     ClientOVPN = File.join(File.dirname(__FILE__), "secrets/client.ovpn")
