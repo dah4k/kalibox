@@ -65,19 +65,6 @@ Vagrant.configure("2") do |config|
             /home/vagrant/.zshrc
     SHELL
 
-    # Fix LightDM missing package error/warning (Debian #837979)
-    # Must use `apt-get` because `apt` unstable CLI warnings.
-    # Reference: https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=837979
-    config.vm.provision "Fix LightDM missing package error", type: "shell",
-        inline: <<-SHELL
-        DEBIAN_FRONTEND=noninteractive apt-get install \
-            --quiet=2 \
-            --assume-yes \
-            --no-install-recommends \
-            accountsservice
-        systemctl restart lightdm
-    SHELL
-
     # Start client VPN service
     # Reference: https://wiki.archlinux.org/title/OpenVPN#Starting_OpenVPN
     ClientOVPN = File.join(File.dirname(__FILE__), "secrets/client.ovpn")
