@@ -65,14 +65,25 @@ Vagrant.configure("2") do |config|
             /home/vagrant/.zshrc
     SHELL
 
-    # Enable LightDM Auto-Login
-    config.vm.provision "Enable LightDM Auto-Login", type: "shell", inline: <<-SHELL
-        sed -i -E \
-            -e 's/^#?autologin-user=.*/autologin-user=vagrant/' \
-            /etc/lightdm/lightdm.conf
-        systemctl enable lightdm
-        systemctl restart lightdm
-    SHELL
+    if @enable_gui
+        # Enable LightDM Auto-Login
+        config.vm.provision "Enable LightDM Auto-Login (GUI VM)", type: "shell",
+            inline: <<-SHELL
+                sed -i -E \
+                    -e 's/^#?autologin-user=.*/autologin-user=vagrant/' \
+                    /etc/lightdm/lightdm.conf
+                systemctl enable lightdm
+                systemctl restart lightdm
+            SHELL
+    else
+        # Disable LightDM service
+        # Headless VM does not need LightDM and Xorg to be running.
+        config.vm.provision "Disable LightDM service (Headless VM)", type: "shell",
+            inline: <<-SHELL
+                systemctl disable lightdm
+                systemctl stop lightdm
+            SHELL
+    end
 
     # Start client VPN service
     # Reference: https://wiki.archlinux.org/title/OpenVPN#Starting_OpenVPN
