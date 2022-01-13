@@ -39,31 +39,33 @@ Vagrant.configure("2") do |config|
     # - Disable ChallengeResponseAuthentication
     # - UsePAM is required for account and session check, but without PasswordAuth or CRAM
     # - Disable RootLogin
-    config.vm.provision "SSH Hardening", type: "shell", inline: <<-SHELL
-        sed -i -E \
-            -e 's/^#?PubkeyAuthentication .*/PubkeyAuthentication yes/' \
-            -e 's/^#?PasswordAuthentication .*/PasswordAuthentication no/' \
-            -e 's/^#?ChallengeResponseAuthentication .*/ChallengeResponseAuthentication no/' \
-            -e 's/^#?UsePAM .*/UsePAM yes/' \
-            -e 's/^#?PermitRootLogin .*/PermitRootLogin no/' \
-            /etc/ssh/sshd_config
-        systemctl restart sshd
-    SHELL
+    config.vm.provision "SSH Hardening", type: "shell",
+        inline: <<-SHELL
+            sed -i -E \
+                -e 's/^#?PubkeyAuthentication .*/PubkeyAuthentication yes/' \
+                -e 's/^#?PasswordAuthentication .*/PasswordAuthentication no/' \
+                -e 's/^#?ChallengeResponseAuthentication .*/ChallengeResponseAuthentication no/' \
+                -e 's/^#?UsePAM .*/UsePAM yes/' \
+                -e 's/^#?PermitRootLogin .*/PermitRootLogin no/' \
+                /etc/ssh/sshd_config
+            systemctl restart sshd
+        SHELL
 
     # Change user password
     config.vm.provision "Change user password", type: "shell",
         inline: "chpasswd <<< #{@username_password}"
 
     # Fix Kali ZSH ^P history-search
-    config.vm.provision "Fix Kali ZSH ^P", type: "shell", inline: <<-SHELL
-        sed -i -E \
-            -e 's/^zle -N toggle_oneline_prompt/#zle -N toggle_oneline_prompt/' \
-            -e 's/^bindkey .P toggle_oneline_prompt/#bindkey ^P toggle_oneline_prompt/' \
-            /etc/skel/.zshrc \
-            /etc/zsh/newuser.zshrc.recommended \
-            /root/.zshrc \
-            /home/vagrant/.zshrc
-    SHELL
+    config.vm.provision "Fix Kali ZSH ^P", type: "shell",
+        inline: <<-SHELL
+            sed -i -E \
+                -e 's/^zle -N toggle_oneline_prompt/#zle -N toggle_oneline_prompt/' \
+                -e 's/^bindkey .P toggle_oneline_prompt/#bindkey ^P toggle_oneline_prompt/' \
+                /etc/skel/.zshrc \
+                /etc/zsh/newuser.zshrc.recommended \
+                /root/.zshrc \
+                /home/vagrant/.zshrc
+        SHELL
 
     if @enable_gui
         # Enable LightDM Auto-Login
@@ -93,18 +95,20 @@ Vagrant.configure("2") do |config|
         config.vm.provision "Upload VPN config to /tmp", type: "file",
             source: ClientOVPN, destination: "/tmp/client.ovpn"
 
-        config.vm.provision "Configure client VPN", type: "shell", inline: <<-SHELL
-            chown root:root /tmp/client.ovpn
-            chmod 0660 /tmp/client.ovpn
-            mv /tmp/client.ovpn /etc/openvpn/client/client.conf
-        SHELL
+        config.vm.provision "Configure client VPN", type: "shell",
+            inline: <<-SHELL
+                chown root:root /tmp/client.ovpn
+                chmod 0660 /tmp/client.ovpn
+                mv /tmp/client.ovpn /etc/openvpn/client/client.conf
+            SHELL
 
         # Known issue: Systemd sometime writes info message to stderr.
         # Vagrant displays anything from stderr in red color.
         # They are not real errors and may be safely ignored.
-        config.vm.provision "Start client VPN service", type: "shell", inline: <<-SHELL
-            systemctl enable openvpn-client@client.service
-            systemctl start openvpn-client@client.service
-        SHELL
+        config.vm.provision "Start client VPN service", type: "shell",
+            inline: <<-SHELL
+                systemctl enable openvpn-client@client.service
+                systemctl start openvpn-client@client.service
+            SHELL
     end
 end
