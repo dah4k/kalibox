@@ -33,6 +33,15 @@ Vagrant.configure("2") do |config|
     # Disable default sharing current directory
     config.vm.synced_folder ".", "/vagrant", disabled: true
 
+    # Reconfigure Grub
+    # Faster boot time by eliminating Grub default 5 seconds timeout.
+    # Known limitation: First VM boot is still 5 delayed.
+    config.vm.provision "Reconfigure Grub", type: "shell",
+        inline: <<-SHELL
+            sed -i -e 's/^GRUB_TIMEOUT=5/GRUB_TIMEOUT=0/' /etc/default/grub
+            update-grub
+        SHELL
+
     # SSH Hardening
     # - Enable PubkeyAuthentication
     # - Disable PasswordAuthentication
