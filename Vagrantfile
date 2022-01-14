@@ -96,6 +96,31 @@ Vagrant.configure("2") do |config|
             SHELL
     end
 
+    # Personalize user workspace
+    # - Remove PulseAudio and PipeWire (CPU and Memory savings)
+    # - Remove Nano (Vi is good enough)
+    # - Install favorite tools (ie. Ripgrep and Fd-Find)
+    # - Hush login to hide Python2 message
+    # - Upload dotfiles
+    config.vm.provision "Personalize installed packages", type: "shell",
+        inline: <<-SHELL
+            DEBIAN_FRONTEND=noninteractive apt-get autoremove \
+                --quiet=2 \
+                --assume-yes \
+                pulseaudio pipewire nano
+            DEBIAN_FRONTEND=noninteractive apt-get install \
+                --quiet=2 \
+                --assume-yes \
+                --no-install-recommends \
+                ripgrep fd-find
+        SHELL
+    config.vm.provision "Hush login", type: "shell", privileged: false,
+        inline: "touch /home/vagrant/.hushlogin"
+    config.vm.provision "Upload .bash_aliases", type: "file",
+        source: "dotfiles/bash_aliases", destination: "/home/vagrant/.bash_aliases"
+    config.vm.provision "Upload .vimrc", type: "file",
+        source: "dotfiles/vimrc", destination: "/home/vagrant/.vimrc"
+
     # Start client VPN service
     # Reference: https://wiki.archlinux.org/title/OpenVPN#Starting_OpenVPN
     ClientOVPN = File.join(File.dirname(__FILE__), "secrets/client.ovpn")
