@@ -3,6 +3,7 @@ unalias -a
 alias ..="cd .."
 alias -- +="pushd ."
 alias -- -="popd"
+alias date="LC_TIME=en_GB.UTF-8 date"
 
 alias fd="fdfind"
 alias ip="ip --color=auto"
