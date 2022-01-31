@@ -33,6 +33,9 @@ Vagrant.configure("2") do |config|
     # Disable default sharing current directory
     config.vm.synced_folder ".", "/vagrant", disabled: true
 
+    # Share PoC directory
+    config.vm.synced_folder "poc", "/home/vagrant/poc"
+
     # Reconfigure Grub
     # Faster boot time by eliminating Grub default 5 seconds timeout.
     # Known limitation: First VM boot is still 5 delayed.
