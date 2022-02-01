@@ -10,9 +10,9 @@ clearenv: inject.so
 	LD_PRELOAD=./inject.so ls
 
 test_%: test_%.c
-	gcc -Wall -o $@ $<
+	gcc -Wall $< -o $@
 
 inject.so: inject.c
-	gcc -Wall -fPIC -shared -Wl,--no-as-needed -ldl -o $@ $<
+	gcc -Wall -fPIC -shared $< -ldl -o $@
 
 .PHONY: all test clean
