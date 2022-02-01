@@ -13,6 +13,6 @@ test_%: test_%.c
 	gcc -Wall -o $@ $<
 
 inject.so: inject.c
-	gcc -Wall -fPIC -shared -ldl -o $@ $<
+	gcc -Wall -fPIC -shared -Wl,--no-as-needed -ldl -o $@ $<
 
 .PHONY: all test clean
