@@ -100,6 +100,7 @@ Vagrant.configure("2") do |config|
     # - Remove PulseAudio and PipeWire (CPU and Memory savings)
     # - Remove Nano (Vi is good enough)
     # - Install favorite tools (ie. Ripgrep and Fd-Find)
+    # - Fix borken and install GDB
     # - Hush login to hide Python2 message
     # - Upload dotfiles
     config.vm.provision "Personalize installed packages", type: "shell",
@@ -113,6 +114,12 @@ Vagrant.configure("2") do |config|
                 --assume-yes \
                 --no-install-recommends \
                 ripgrep fd-find
+        SHELL
+    config.vm.provision "Fix and Install GDB", type: "shell",
+        inline: <<-SHELL
+            DEBIAN_FRONTEND=noninteractive apt-get -y update
+            DEBIAN_FRONTEND=noninteractive apt-get -y --fix-broken install
+            DEBIAN_FRONTEND=noninteractive apt-get -y install gdb
         SHELL
     config.vm.provision "Hush login", type: "shell", privileged: false,
         inline: "touch /home/vagrant/.hushlogin"
