@@ -1,18 +1,20 @@
+DEFAULT: poc
+
 all: test_clearenv test_pwnkit inject.so
 
 test: test_clearenv inject.so
 	LD_PRELOAD=./inject.so ./test_clearenv
 
+poc: test_pwnkit inject.so
+	./test_pwnkit
+
 clean:
 	rm -f test_clearenv test_pwnkit inject.so
 
-clearenv: inject.so
-	LD_PRELOAD=./inject.so ls
-
 test_%: test_%.c
-	gcc -Wall $< -o $@
+	gcc -Wall -g $< -o $@
 
 inject.so: inject.c
-	gcc -Wall -fPIC -shared $< -ldl -o $@
+	gcc -Wall -g -fPIC -shared $< -ldl -o $@
 
-.PHONY: all test clean
+.PHONY: all test poc clean
