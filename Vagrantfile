@@ -128,6 +128,8 @@ Vagrant.configure("2") do |config|
         source: "dotfiles/bash_aliases", destination: "/home/vagrant/.bash_aliases"
     config.vm.provision "Upload .vimrc", type: "file",
         source: "dotfiles/vimrc", destination: "/home/vagrant/.vimrc"
+    config.vm.provision "Upload .Xmodmap", type: "file",
+        source: "dotfiles/Xmodmap", destination: "/home/vagrant/.Xmodmap"
 
     # Start client VPN service
     # Reference: https://wiki.archlinux.org/title/OpenVPN#Starting_OpenVPN
