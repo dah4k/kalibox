@@ -1,10 +1,13 @@
-all:
+start:
 	vagrant up
+
+stop:
+	vagrant halt
 
 test:
 	ruby tests/*
 
-clean:
+distclean:
 	vagrant destroy --force
 
-.PHONY: all test clean
+.PHONY: start stop test distclean
