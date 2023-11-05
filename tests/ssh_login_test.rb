@@ -6,7 +6,7 @@ class SSHLoginTest < Test::Unit::TestCase
     def setup
         @default_username = 'vagrant'
         @default_password = 'vagrant'
-        @guest_addr = '127.0.0.1'
+        @guest_addr = '192.168.56.10'
         @guest_port = 2222
 
         @vagrant_insecure_key = '~/.vagrant.d/insecure_private_key'
