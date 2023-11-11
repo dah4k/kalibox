@@ -34,6 +34,9 @@ Vagrant.configure("2") do |config|
     # Disable default sharing current directory
     config.vm.synced_folder ".", "/vagrant", disabled: true
 
+    # Share Host datatmp folder to Guest VM /datatmp
+    config.vm.synced_folder "datatmp", "/datatmp", SharedFoldersEnableSymlinksCreate: false
+
     # Reconfigure Grub
     # Faster boot time by eliminating Grub default 5 seconds timeout.
     # Known limitation: First VM boot is still 5 delayed.
