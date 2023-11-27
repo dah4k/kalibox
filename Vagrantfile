@@ -19,6 +19,51 @@ else
     open(SecretPassword, "w", 0600) {|f| f.write(@username_password)}
 end
 
+$apt_remove_unused = <<-SCRIPT
+DEBIAN_FRONTEND=noninteractive apt-get autoremove \
+    --quiet=2 \
+    --assume-yes \
+        nano \
+        pipewire \
+        pulseaudio
+SCRIPT
+
+$apt_install_devtools = <<-SCRIPT
+DEBIAN_FRONTEND=noninteractive apt-get install \
+    --quiet=2 \
+    --assume-yes \
+    --no-install-recommends \
+        fd-find \
+        git \
+        patch \
+        pipx \
+        ripgrep
+
+DEBIAN_FRONTEND=noninteractive apt-get -y update
+DEBIAN_FRONTEND=noninteractive apt-get -y --fix-broken install
+DEBIAN_FRONTEND=noninteractive apt-get install \
+    --quiet=2 \
+    --assume-yes \
+    --no-install-recommends gdb
+SCRIPT
+
+$install_volatility3 = <<-SCRIPT
+pipx install volatility3
+SCRIPT
+
+$install_ilspy = <<-SCRIPT
+mkdir staging
+pushd staging
+curl --location --remote-name https://github.com/icsharpcode/AvaloniaILSpy/releases/download/v7.2-rc/Linux.x64.Release.zip
+unzip Linux.x64.Release.zip
+unzip ILSpy-linux-x64-Release.zip
+mkdir --parents /home/vagrant/.dotnet
+mv artifacts/linux-x64 /home/vagrant/.dotnet/ilspy
+popd
+rm --recursive --force staging
+ln --symbolic --force --target-directory ~/.local/bin ~/.dotnet/ilspy/ILSpy
+SCRIPT
+
 Vagrant.configure("2") do |config|
     config.vm.box = "kalilinux/rolling"
     config.vm.box_version = "2023.3.0"
@@ -100,33 +145,17 @@ Vagrant.configure("2") do |config|
             SHELL
     end
 
-    # Personalize user workspace
-    # - Remove PulseAudio and PipeWire (CPU and Memory savings)
-    # - Remove Nano (Vi is good enough)
-    # - Install favorite tools (ie. Ripgrep and Fd-Find)
-    # - Fix borken and install GDB
-    # - Hush login to hide Python2 message
-    # - Upload dotfiles
-    config.vm.provision "Personalize installed packages", type: "shell",
-        inline: <<-SHELL
-            DEBIAN_FRONTEND=noninteractive apt-get autoremove \
-                --quiet=2 \
-                --assume-yes \
-                pulseaudio pipewire nano
-            DEBIAN_FRONTEND=noninteractive apt-get install \
-                --quiet=2 \
-                --assume-yes \
-                --no-install-recommends \
-                ripgrep fd-find
-        SHELL
-    config.vm.provision "Fix and Install GDB", type: "shell",
-        inline: <<-SHELL
-            DEBIAN_FRONTEND=noninteractive apt-get -y update
-            DEBIAN_FRONTEND=noninteractive apt-get -y --fix-broken install
-            DEBIAN_FRONTEND=noninteractive apt-get -y install gdb
-        SHELL
+    # Uninstall/Install Packages
+    config.vm.provision "shell", inline: $apt_remove_unused
+    config.vm.provision "shell", inline: $apt_install_devtools
+    config.vm.provision "shell", inline: $install_volatility3, privileged: false
+    config.vm.provision "shell", inline: $install_ilspy, privileged: false
+
+    # Hush login to hide Python2 message
     config.vm.provision "Hush login", type: "shell", privileged: false,
         inline: "touch /home/vagrant/.hushlogin"
+
+    # Upload dotfiles
     config.vm.provision "Upload .bash_aliases", type: "file",
         source: "dotfiles/bash_aliases", destination: "/home/vagrant/.bash_aliases"
     config.vm.provision "Upload .vimrc", type: "file",
