@@ -1,0 +1,7 @@
+[hashicorp]
+name=Hashicorp Stable - RHEL 9 - $basearch
+enabled=1
+autorefresh=0
+baseurl=https://rpm.releases.hashicorp.com/RHEL/9/$basearch/stable
+gpgcheck=1
+gpgkey=https://rpm.releases.hashicorp.com/gpg
