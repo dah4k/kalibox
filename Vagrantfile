@@ -64,6 +64,166 @@ rm --recursive --force staging
 ln --symbolic --force --target-directory ~/.local/bin ~/.dotnet/ilspy/ILSpy
 SCRIPT
 
+$apt_install_sagemath_build_requirements = <<-SCRIPT
+DEBIAN_FRONTEND=noninteractive apt-get -y update
+DEBIAN_FRONTEND=noninteractive apt-get install \
+    --quiet=2 \
+    --assume-yes \
+    --no-install-recommends \
+        autoconf \
+        automake \
+        bc \
+        binutils \
+        cmake \
+        g++ \
+        gcc \
+        gfortran \
+        libtool \
+        m4 \
+        make \
+        meson \
+        ninja-build \
+        pkg-config
+SCRIPT
+
+$apt_install_sagemath_precompiled_components = <<-SCRIPT
+DEBIAN_FRONTEND=noninteractive apt-get install \
+    --quiet=2 \
+    --assume-yes \
+    --no-install-recommends \
+      4ti2 \
+      bzip2 \
+      cliquer \
+      coinor-cbc \
+      coinor-libcbc-dev \
+      curl \
+      default-jdk \
+      dvipng \
+      ecl \
+      eclib-tools \
+      fflas-ffpack \
+      ffmpeg \
+      gengetopt \
+      gfan \
+      glpk-utils \
+      gmp-ecm \
+      gpgconf \
+      imagemagick \
+      latexmk \
+      lcalc \
+      libatomic-ops-dev \
+      libavdevice-dev \
+      libbraiding-dev \
+      libbz2-dev \
+      libcdd-dev \
+      libcdd-tools \
+      libcliquer-dev \
+      libcurl4-openssl-dev \
+      libec-dev \
+      libecm-dev \
+      libfile-slurp-perl \
+      libflint-arb-dev \
+      libflint-dev \
+      libfplll-dev \
+      libfreetype-dev \
+      libgc-dev \
+      libgd-dev \
+      libgf2x-dev \
+      libgiac-dev \
+      libgivaro-dev \
+      libglpk-dev \
+      libgraphviz-dev \
+      libgsl-dev \
+      libhomfly-dev \
+      libigraph-dev \
+      libiml-dev \
+      libisl-dev \
+      libjpeg-dev \
+      libjson-perl \
+      liblfunction-dev \
+      liblinbox-dev \
+      liblrcalc-dev \
+      liblzma-dev \
+      libm4ri-dev \
+      libm4rie-dev \
+      libmongodb-perl \
+      libmpc-dev \
+      libmpfi-dev \
+      libmpfr-dev \
+      libnauty-dev \
+      libntl-dev \
+      libpari-dev \
+      libperl-dev \
+      libplanarity-dev \
+      libpolymake-dev \
+      libppl-dev \
+      libprimesieve-dev \
+      libpython3-dev \
+      libqhull-dev \
+      libreadline-dev \
+      librw-dev \
+      libsingular4-dev \
+      libsqlite3-dev \
+      libssl-dev \
+      libsuitesparse-dev \
+      libsvg-perl \
+      libsymmetrica2-dev \
+      libtbb-dev \
+      libterm-readkey-perl \
+      libterm-readline-gnu-perl \
+      libxml-libxslt-perl \
+      libxml-writer-perl \
+      libxml2-dev \
+      libzmq3-dev \
+      lrslib \
+      maxima \
+      maxima-sage \
+      nauty \
+      openssh-client \
+      openssl \
+      palp \
+      pandoc \
+      pari-doc \
+      pari-elldata \
+      pari-galdata \
+      pari-galpol \
+      pari-gp2c \
+      pari-seadata \
+      patchelf \
+      pdf2svg \
+      planarity \
+      polymake \
+      ppl-dev \
+      python3 \
+      python3-distutils \
+      python3-venv \
+      r-base-dev \
+      r-cran-lattice \
+      singular \
+      singular-doc \
+      sqlite3 \
+      sympow \
+      tachyon \
+      tex-gyre \
+      texinfo \
+      texlive-fonts-recommended \
+      texlive-lang-english \
+      texlive-latex-extra \
+      texlive-xetex \
+      tox \
+      xcas \
+      xz-utils
+SCRIPT
+
+$rebuild_sagemath = <<-SCRIPT
+git clone --origin upstream https://github.com/sagemath/sage.git
+cd sage
+git checkout 10.2
+./bootstrap
+./configure --prefix=$HOME/.local
+make -j build
+SCRIPT
+
 Vagrant.configure("2") do |config|
     config.vm.box = "kalilinux/rolling"
     config.vm.box_version = "2023.3.0"
@@ -72,8 +232,8 @@ Vagrant.configure("2") do |config|
         vb.name = "kalibox"
         vb.gui = @enable_gui
         vb.linked_clone = true
-        vb.memory = 2048
-        vb.cpus = 1
+        vb.memory = 8192
+        vb.cpus = 8
     end
 
     # Disable default sharing current directory
@@ -150,6 +310,9 @@ Vagrant.configure("2") do |config|
     config.vm.provision "shell", inline: $apt_install_devtools
     config.vm.provision "shell", inline: $install_volatility3, privileged: false
     config.vm.provision "shell", inline: $install_ilspy, privileged: false
+    config.vm.provision "shell", inline: $apt_install_sagemath_build_requirements
+    config.vm.provision "shell", inline: $apt_install_sagemath_precompiled_components
+    #FIXME config.vm.provision "shell", inline: $rebuild_sagemath, privileged: false
 
     # Hush login to hide Python2 message
     config.vm.provision "Hush login", type: "shell", privileged: false,
