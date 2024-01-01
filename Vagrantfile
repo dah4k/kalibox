@@ -29,6 +29,7 @@ DEBIAN_FRONTEND=noninteractive apt-get autoremove \
 SCRIPT
 
 $apt_install_devtools = <<-SCRIPT
+DEBIAN_FRONTEND=noninteractive apt-get -y update
 DEBIAN_FRONTEND=noninteractive apt-get install \
     --quiet=2 \
     --assume-yes \
@@ -39,7 +40,6 @@ DEBIAN_FRONTEND=noninteractive apt-get install \
         pipx \
         ripgrep
 
-DEBIAN_FRONTEND=noninteractive apt-get -y update
 DEBIAN_FRONTEND=noninteractive apt-get -y --fix-broken install
 DEBIAN_FRONTEND=noninteractive apt-get install \
     --quiet=2 \
