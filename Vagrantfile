@@ -215,13 +215,15 @@ DEBIAN_FRONTEND=noninteractive apt-get install \
       xz-utils
 SCRIPT
 
+## HACK: Reserve one CPU for SSH control plane, make -j7 build in nohup background
+## Reference: https://en.wikipedia.org/wiki/Nohup#Overcoming_hanging
 $rebuild_sagemath = <<-SCRIPT
 git clone --origin upstream https://github.com/sagemath/sage.git
 cd sage
 git checkout 10.2
 ./bootstrap
 ./configure --prefix=$HOME/.local
-make -j build
+nohup make -j7 build > make_build.log 2> make_build.err </dev/null &
 SCRIPT
 
 Vagrant.configure("2") do |config|
@@ -312,7 +314,7 @@ Vagrant.configure("2") do |config|
     config.vm.provision "shell", inline: $install_ilspy, privileged: false
     config.vm.provision "shell", inline: $apt_install_sagemath_build_requirements
     config.vm.provision "shell", inline: $apt_install_sagemath_precompiled_components
-    #FIXME config.vm.provision "shell", inline: $rebuild_sagemath, privileged: false
+    config.vm.provision "shell", inline: $rebuild_sagemath, privileged: false
 
     # Hush login to hide Python2 message
     config.vm.provision "Hush login", type: "shell", privileged: false,
