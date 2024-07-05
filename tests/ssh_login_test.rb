@@ -18,7 +18,7 @@ class SSHLoginTest < Test::Unit::TestCase
             '../.vagrant/machines/default/virtualbox/private_key')
 
         @remote_cmd = 'id'
-        @expected = "uid=1000(vagrant) gid=1000(vagrant) groups=1000(vagrant),4(adm),20(dialout),24(cdrom),25(floppy),27(sudo),29(audio),30(dip),44(video),46(plugdev),100(users),106(netdev),118(wireshark),121(bluetooth),134(scanner),141(vboxsf),142(kaboxer)\n"
+        @expected = "uid=1000(vagrant) gid=1000(vagrant) groups=1000(vagrant),4(adm),20(dialout),24(cdrom),25(floppy),27(sudo),29(audio),30(dip),44(video),46(plugdev),100(users),101(netdev),117(bluetooth),121(wireshark),129(scanner),136(vboxsf),137(kaboxer)\n"
     end
 
     def teardown

@@ -66,7 +66,7 @@ SCRIPT
 
 Vagrant.configure("2") do |config|
     config.vm.box = "kalilinux/rolling"
-    config.vm.box_version = "2023.3.0"
+    config.vm.box_version = "2024.2.0"
 
     config.vm.provider "virtualbox" do |vb|
         vb.name = "kalibox"
