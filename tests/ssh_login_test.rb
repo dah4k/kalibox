@@ -1,3 +1,6 @@
+# Copyright 2024 dah4k
+# SPDX-License-Identifier: EPL-2.0
+
 require 'test/unit'
 require 'net/ssh'
 require 'open3'
