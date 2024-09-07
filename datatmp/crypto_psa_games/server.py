@@ -1,7 +1,6 @@
 from Crypto.Util.number import bytes_to_long, getPrime, GCD
 from Crypto.Util.Padding import pad
-#from secret import FLAG
-FLAG = b"HTB{fake_flag_for_testing}"
+from secret import FLAG
 
 WELCOME = '''Welcome to my custom PSA cryptosystem!
 In this cryptosystem, the message is PKCS#7 padded and then encrypted with RSA.

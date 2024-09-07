@@ -2,7 +2,7 @@
 from Crypto.Util.number import bytes_to_long, getPrime, GCD
 from Crypto.Util.Padding import pad
 from pprint import pformat
-FLAG = b"HTB{fake_flag_for_testing}"
+from secret import FLAG
 
 class PSA:
     def __init__(self):
