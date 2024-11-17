@@ -5,7 +5,7 @@ HASHICORP_REPO_URL   := https://rpm.releases.hashicorp.com/RHEL/9/$$basearch/sta
 HASHICORP_REPO_NAME  := "Hashicorp Stable - RHEL 9 - $$basearch"
 HASHICORP_REPO_ALIAS := hashicorp
 HASHICORP_RPM_GPG    := https://rpm.releases.hashicorp.com/gpg
-HOST_REQUIREMENTS    := virtualbox vagrant
+HOST_REQUIREMENTS    := virtualbox vagrant ruby3.3-rubygem-net-ssh ruby3.3-rubygem-bcrypt_pbkdf ruby3.3-rubygem-ed25519
 
 _ANSI_NORM  := \033[0m
 _ANSI_CYAN  := \033[36m
